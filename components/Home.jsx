@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
@@ -11,6 +12,19 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Home = ({ navigation }) => {
   const [text, onChangeText] = React.useState('');
+  const handleSearch = async () => {
+    try {
+      const url = `https://api.opencagedata.com/geocode/v1/json?key=e85809527b0341b18712ec1bacc3aab9&q=${text}`;
+      const cityInfo = await fetch(url);
+      const response = await cityInfo.json();
+      const { components } = response.results[0];
+      const { geometry } = response.results[0];
+      console.log(components);
+      navigation.push('Details', { name: components.city, components, geometry });
+    } catch (err) {
+      alert(err);
+    }
+  };
   return (
     <View style={styles.main}>
       <View style={styles.container}>
@@ -23,7 +37,7 @@ const Home = ({ navigation }) => {
             value={text}
           />
           <View style={styles.buttons}>
-            <TouchableOpacity style={styles.SingleButton}>
+            <TouchableOpacity style={styles.SingleButton} onPress={handleSearch}>
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
             <Button
