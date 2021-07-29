@@ -7,6 +7,7 @@ import {
   View, Text, StyleSheet, TextInput, SafeAreaView, TouchableOpacity,
 } from 'react-native';
 import { Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Home = ({ navigation }) => {
   const [text, onChangeText] = React.useState('');
@@ -25,9 +26,16 @@ const Home = ({ navigation }) => {
             <TouchableOpacity style={styles.SingleButton}>
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
-            <Button style={styles.SingleButton}>
-              <Text>AA</Text>
-            </Button>
+            <Button
+              buttonStyle={styles.SingleButton}
+              icon={(
+                <Icon
+                  name="gps-fixed"
+                  color="#fff"
+                  size={20}
+                />
+              )}
+            />
           </View>
         </SafeAreaView>
 
