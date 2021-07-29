@@ -39,6 +39,26 @@ const Home = ({ navigation }) => {
           </View>
         </SafeAreaView>
 
+        <View style={styles.recentSearches}>
+          <Text style={styles.textPrevious}>Previous Searches</Text>
+
+          <View style={styles.recentSearchesElement}>
+            <View style={styles.cityInfo}>
+              <Text>Itapecirica da Serra</Text>
+              <Text>NSL, ??</Text>
+            </View>
+            <Button
+              buttonStyle={{ backgroundColor: 'transparent' }}
+              icon={(
+                <Icon
+                  name="arrow-forward"
+                  color="#FF2E4E"
+                  size={30}
+                />
+              )}
+            />
+          </View>
+        </View>
       </View>
 
     </View>
@@ -58,6 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     width: 300,
     alignSelf: 'center',
+    marginBottom: 40,
   },
   input: {
     height: 50,
@@ -72,6 +93,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     marginTop: 20,
+  },
+  textPrevious: {
+    fontSize: 25,
+    fontWeight: 'bold',
   },
   buttons: {
     flexDirection: 'row',
@@ -88,6 +113,26 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  recentSearches: {
+    marginTop: 20,
+  },
+  recentSearchesElement: {
+    flexDirection: 'row',
+    marginTop: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(224, 224, 224, 0.4)',
+    height: 80,
+    borderRadius: 15,
+  },
+  cityInfo: {
+    height: 40,
+    borderLeftColor: '#FF2E4E',
+    borderLeftWidth: 3,
+    paddingLeft: 10,
+    justifyContent: 'center',
   },
 });
 export default Home;
