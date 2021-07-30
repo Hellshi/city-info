@@ -1,15 +1,15 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import {
-  View, Text, Image, Dimensions, StyleSheet,
+  View, Image, Dimensions, StyleSheet,
 } from 'react-native';
 import MapView from 'react-native-maps';
+import { Text } from 'react-native-elements';
 
 export default function Details({ route }) {
   const { components } = route.params;
   const country = components.country_code;
   const { geometry } = route.params;
-  console.log(geometry);
 
   return (
     <View>
@@ -22,8 +22,46 @@ export default function Details({ route }) {
           longitudeDelta: 0.3,
         }}
       />
-      <Image style={{ width: 64, height: 64 }} source={{ uri: `https://www.countryflags.io/${country}/flat/64.png` }} />
-      <Text>{route.params.name}</Text>
+      <View style={styles.main}>
+        <View style={styles.headers}>
+          <Image
+            style={{
+              width: 64, height: 64,
+            }}
+            source={{ uri: `https://www.countryflags.io/${country}/flat/64.png` }}
+          />
+          <Text h3>{route.params.name}</Text>
+        </View>
+
+        <View style={styles.info}>
+          <Text>
+            Continent:
+            {' '}
+            {`${components.country}`}
+          </Text>
+          <Text>
+            Municipality:
+            {' '}
+            {`${components.municipality}`}
+          </Text>
+          <Text>
+            Region:
+            {' '}
+            {`${components.region}`}
+          </Text>
+          <Text>
+            State:
+            {' '}
+            {`${components.state}/${components.state_code}`}
+          </Text>
+          <Text>
+            State District:
+            {' '}
+            {`${components.state_district}`}
+          </Text>
+        </View>
+      </View>
+
     </View>
   );
 }
@@ -37,5 +75,19 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get('window').width,
     height: 250,
+  },
+  main: {
+    width: 300,
+    alignSelf: 'center',
+  },
+  headers: {
+    width: 300,
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  info: {
+    minHeight: 150,
+    justifyContent: 'space-between',
   },
 });

@@ -19,7 +19,6 @@ const Home = ({ navigation }) => {
       const response = await cityInfo.json();
       const { components } = response.results[0];
       const { geometry } = response.results[0];
-      console.log(components);
       navigation.push('Details', { name: components.city, components, geometry });
     } catch (err) {
       alert(err);
