@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable camelcase */
 /* eslint-disable no-alert */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable react/prop-types */
@@ -8,21 +10,52 @@ import {
   View, Text, StyleSheet, TextInput, SafeAreaView, TouchableOpacity,
 } from 'react-native';
 import { Button } from 'react-native-elements';
+import * as Location from 'expo-location';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useDispatch, useSelector } from 'react-redux';
+import { citiesSliceActions } from '../store/citySlice';
 
 const Home = ({ navigation }) => {
   const [text, onChangeText] = React.useState('');
-  const handleSearch = async () => {
+  const citties = useSelector((state) => state.city.recentSearched);
+
+  const dispatch = useDispatch();
+  const handleSearch = async (url) => {
     try {
-      const url = `https://api.opencagedata.com/geocode/v1/json?key=e85809527b0341b18712ec1bacc3aab9&q=${text}`;
       const cityInfo = await fetch(url);
       const response = await cityInfo.json();
       const { components } = response.results[0];
       const { geometry } = response.results[0];
-      navigation.push('Details', { name: components.city, components, geometry });
+      dispatch(citiesSliceActions.addCity({
+        components,
+        geometry,
+      }));
+      const name = components.city ? components.name : components.city_district;
+      navigation.push('Details', { name, components, geometry });
     } catch (err) {
       alert(err);
     }
+  };
+  const [error, setError] = useState(null);
+  const handleCurrentLoaction = async () => {
+    try {
+      const { status } = await Location.requestBackgroundPermissionsAsync();
+
+      if (status !== 'granted') {
+        setError('Acess to location is needed');
+        return;
+      }
+      const location = await Location.getCurrentPositionAsync();
+      const { latitude, longitude } = location.coords;
+      const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=4b07849320724fcab06079515b162e5e`;
+      handleSearch(url);
+    } catch (err) {
+      alert(error);
+    }
+  };
+  const handlePrevCity = (city) => {
+    const name = city.components.city ? city.components.name : city.components.city_district;
+    navigation.push('Details', { name, components: city.components, geometry: city.geometry });
   };
   return (
     <View style={styles.main}>
@@ -36,10 +69,11 @@ const Home = ({ navigation }) => {
             value={text}
           />
           <View style={styles.buttons}>
-            <TouchableOpacity style={styles.SingleButton} onPress={handleSearch}>
+            <TouchableOpacity style={styles.SingleButton} onPress={() => handleSearch(`https://api.opencagedata.com/geocode/v1/json?key=e85809527b0341b18712ec1bacc3aab9&q=${text}`)}>
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
             <Button
+              onPress={handleCurrentLoaction}
               buttonStyle={styles.SingleButton}
               icon={(
                 <Icon
@@ -54,23 +88,29 @@ const Home = ({ navigation }) => {
 
         <View style={styles.recentSearches}>
           <Text style={styles.textPrevious}>Previous Searches</Text>
-
-          <View style={styles.recentSearchesElement}>
-            <View style={styles.cityInfo}>
-              <Text>Itapecirica da Serra</Text>
-              <Text>NSL, ??</Text>
-            </View>
-            <Button
-              buttonStyle={{ backgroundColor: 'transparent' }}
-              icon={(
-                <Icon
-                  name="arrow-forward"
-                  color="#FF2E4E"
-                  size={30}
-                />
+          {citties.map((citty) => (
+            <View style={styles.recentSearchesElement} key={citties.indexOf(citty)}>
+              <View style={styles.cityInfo}>
+                <Text>{citty.components.city_district ? citty.components.city_district : citty.components.city_district}</Text>
+                <Text>
+                  {citty.components.state}
+                  /
+                  {citty.components.state_code}
+                </Text>
+              </View>
+              <Button
+                onPress={() => handlePrevCity(citty)}
+                buttonStyle={{ backgroundColor: 'transparent' }}
+                icon={(
+                  <Icon
+                    name="arrow-forward"
+                    color="#FF2E4E"
+                    size={30}
+                  />
               )}
-            />
-          </View>
+              />
+            </View>
+          ))}
         </View>
       </View>
 
